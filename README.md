@@ -9,10 +9,64 @@ android app的更新是我们在平时开发的时候常常需要遇到的问题
 
 但是我们在用这些第三方库进行下载的时候可能需要做很多之外的处理，比如更新的时候处理进度。写一个notification去提示下载显示，这无疑让我们在编写代码的时候增加了很多不必要的麻烦。其实Android系统他已经自带了一个下载的库，DownloadManage，并且在里面已经帮我们处理了很多事情，我们只需知道他的用法，再做一些封装便可以处理我们日常中绝大多数下载的问题。
 
-使用：
+### 使用：
+
+首先在app的gradle中引入相应的包
+```
+implementation 'com.qubin.download:download:1.0.1'
+```
+
+之后再在项目的buid中的repositories引入如下：
 
 ```
-implementation 'com.qubin.download:download:1.0.0'
+ maven { url 'https://jitpack.io' }
+```
+
+由于需要安装，所以需要进行广播的注册，我们先进行广播注册。
+
+在oncreate中注册广播，其中downloadCompleteBroadcast为注册的广播
+
+```
+        //实例化广播
+        downloadCompleteBroadcast = new DownloadCompleteBroadcast();
+        //广播过滤器
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(DownloadManager.ACTION_DOWNLOAD_COMPLETE);
+        registerReceiver(downloadCompleteBroadcast,intentFilter);
+
+```
+
+然后在onDestroy()中注销广播
+```
+unregisterReceiver(downloadCompleteBroadcast);
+```
+
+最后写一个广播来监听是否下载完成，启动安装
+
+```
+ class DownloadCompleteBroadcast extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals(DownloadManager.ACTION_DOWNLOAD_COMPLETE)){
+                //安装
+                DownLoadBuilder.intallApk(MainActivity.this,apkName);
+            }
+        }
+    }
+
+```
+
+然后就可以开始下载了
+
+```
+new DownLoadBuilder.Builder(this)
+                .addUrl(下载地址)
+                .isWiFi(true)
+                .addDownLoadName(apkName)
+                .addDscription("开始下载")
+                .builder();
+
 ```
 
 那么我们先来讲解一些常见的api用法。
