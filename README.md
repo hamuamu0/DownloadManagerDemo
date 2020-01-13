@@ -1,5 +1,5 @@
 # DownloadManagerDemo
-一行代码处理更新那些事儿。用DwonLoadManage封装一个app的更新组件。（兼容android 6，7，8）
+一行代码处理更新那些事儿。用DwonLoadManage封装一个app的更新组件。
 
 
 
@@ -14,6 +14,15 @@ android app的更新是我们在平时开发的时候常常需要遇到的问题
 首先在app的gradle中引入相应的包
 ```
 implementation 'com.qubin.download:download:1.0.1'
+```
+
+然后是权限问题：
+
+```
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
+
 ```
 
 之后再在项目的buid中的repositories引入如下：
